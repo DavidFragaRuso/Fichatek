@@ -17,9 +17,6 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
         // Hashear la contraseña antes de guardarla
         $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
-        //$stmt = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
-        //$stmt->execute([$newName, $hashedPassword, 'worker']); // 'worker' es el rol asignado
-
         $db->AddUser( $newName, $hashedPassword );
 
         //$successMessage = "Nuevo trabajador creado con éxito.";
