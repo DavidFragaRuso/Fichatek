@@ -12,9 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($auth->login($username, $password)) {
         // Si el login fue exitoso, obtenemos el rol del usuario
-        $stmt = $pdo->prepare("SELECT role FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user['role'] = $auth->getRole();
 
         // Redirige según el rol del usuario
         if ($user['role'] === 'worker') {
@@ -32,7 +30,7 @@ $pageTitle = 'Panel de login';
 
 ?>
     <div class="login-container">
-        <h1>Login</h1>
+        <h1><?php echo $pageTitle; ?></h1>
         <?php
         if ( !empty( $error ) ) echo "<p class='error'>$error</p>";
         ?>
