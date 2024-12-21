@@ -14,5 +14,10 @@ require_once BASE_PATH . '/config.php';
 <body>
     <div class="login-container">
         <h1>Login</h1>
+        <form method="POST" action="">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar sesión</button>
+        </form>
     </div>
 </body>
