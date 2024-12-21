@@ -16,6 +16,20 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
+class Db {
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
+
+    public function addUser( $username, $password ) {
+        $stmt = $this->pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+        $stmt->execute([$username, $password, 'worker']);
+    }
+
+}
+
 class Auth {
     private $pdo;
 

@@ -5,7 +5,9 @@ if (!defined('BASE_PATH')) {
 require_once BASE_PATH . '/config.php';
 require_once BASE_PATH . '/header.php';
 
-$pageTitle = 'Panel de login';
+$db = new Db($pdo);
+
+$pageTitle = 'Panel de adminsitración';
 
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset($_POST['new-password'])) {
     $newName = $_POST['new-name'];
@@ -15,10 +17,12 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
         // Hashear la contraseña antes de guardarla
         $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
-        $stmt = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
-        $stmt->execute([$newName, $hashedPassword, 'worker']); // 'worker' es el rol asignado
+        //$stmt = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+        //$stmt->execute([$newName, $hashedPassword, 'worker']); // 'worker' es el rol asignado
 
-        $successMessage = "Nuevo trabajador creado con éxito.";
+        $db->AddUser( $newName, $hashedPassword );
+
+        //$successMessage = "Nuevo trabajador creado con éxito.";
 
     } else {
         $errorMessage = "Por favor, complete todos los campos.";
