@@ -51,17 +51,43 @@ require_once BASE_PATH . '/header.php';
 <div class="edit-records">
     <h2>Editar registros horarios de usuario</h2>
     <?php
-        $records = $db->getRecordFromUser($user['id']);
-        if ($records) {
-            echo "<ul>";
-            foreach ($records as $record) {
-                echo "<li>{$record['date']} - Entrada: {$record['entry_time']}, Salida: {$record['exit_time']}</li>";
-            }
-            echo "</ul>";
-            
-        } else {
-            echo "<p>No hay fichajes registrados.</p>";
+    $records = $db->getRecordFromUser($user['id']);
+    if ($records) {
+        echo "<form method='POST' action=''>";
+        echo "<ul>";
+        foreach ($records as $record) {
+            echo "<li>
+                Fecha: {$record['date']} <br>
+                Entrada: <input type='time' name='entry_time_{$record['id']}' value='{$record['entry_time']}' required>
+                Salida: <input type='time' name='exit_time_{$record['id']}' value='{$record['exit_time']}' required>
+                <button type='submit' name='update_record' value='{$record['id']}'>Actualizar</button>
+            </li>";
         }
+        echo "</ul>";
+        echo "</form>";
+    } else {
+        echo "<p>No hay fichajes registrados.</p>";
+    }
+
+    // Manejo de la actualización de registros
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_record'])) {
+        $record_id = intval($_POST['update_record']);
+        $entry_time = $_POST['entry_time_' . $record_id];
+        $exit_time = $_POST['exit_time_' . $record_id];
+
+        // Validar los datos (opcional, pero recomendado)
+        if (strtotime($entry_time) !== false && strtotime($exit_time) !== false) {
+            $stmt = $pdo->prepare("UPDATE work_records SET entry_time = ?, exit_time = ? WHERE id = ?");
+            $stmt->execute([$entry_time, $exit_time, $record_id]);
+
+            echo "<p>Registro actualizado correctamente.</p>";
+            // Redirigir para evitar resubmisión del formulario
+            header("Location: index.php?route=edit_user&worker_id={$user['id']}");
+            exit();
+        } else {
+            echo "<p>Error: Hora inválida.</p>";
+        }
+    }
     ?>
 </div>
 
