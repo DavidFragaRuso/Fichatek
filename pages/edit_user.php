@@ -2,8 +2,10 @@
 session_start();
 require_once BASE_PATH . '/config.php';
 
+$db = new Db($pdo);
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header('Location: login');
+    header('Location: index.php?route=login');
     exit();
 }
 
@@ -12,7 +14,7 @@ if (!isset($_GET['worker_id'])) {
     exit();
 }
 
-$worker_id = intval($_GET['worker_id']); // Sanitiza el ID
+$worker_id = intval($_GET['worker_id']);
 
 // Obtén los datos del usuario
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -45,6 +47,22 @@ require_once BASE_PATH . '/header.php';
 
         <button type="submit">Actualizar Usuario</button>
     </form>
+</div>
+<div class="edit-records">
+    <h2>Editar registros horarios de usuario</h2>
+    <?php
+        $records = $db->getRecordFromUser($user['id']);
+        if ($records) {
+            echo "<ul>";
+            foreach ($records as $record) {
+                echo "<li>{$record['date']} - Entrada: {$record['entry_time']}, Salida: {$record['exit_time']}</li>";
+            }
+            echo "</ul>";
+            
+        } else {
+            echo "<p>No hay fichajes registrados.</p>";
+        }
+    ?>
 </div>
 
 <?php require_once BASE_PATH . '/footer.php'; ?>
