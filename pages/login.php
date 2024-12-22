@@ -1,7 +1,6 @@
 <?php 
 session_start();
 require_once BASE_PATH . '/config.php';
-require_once BASE_PATH . '/header.php';
 
 // Crear la instancia de la clase Auth
 $auth = new Auth($pdo);
@@ -28,17 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTitle = 'Panel de login';
 
+require_once BASE_PATH . '/header.php';
 ?>
-    <div class="login-container">
-        <h1><?php echo $pageTitle; ?></h1>
-        <?php
-        if ( !empty( $error ) ) echo "<p class='error'>$error</p>";
-        ?>
+    <div class="login-container bg-gray">
+        <h1>Inicia sesión</h1>
         <form method="POST" action="">
             <input type="text" name="username" placeholder="Usuario" required>
             <input type="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Iniciar sesión</button>
         </form>
+        <?php
+        if ( !empty( $error ) ) echo "<p class='error'>$error</p>";
+        ?>
     </div>
 
 <?php require_once BASE_PATH . '/footer.php'; ?>

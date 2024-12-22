@@ -47,7 +47,7 @@ require_once BASE_PATH . '/header.php';
             </form>
         </div>
         <div class="view-user">
-            <h2>Acceso a registro horario</h2>
+            <h2>Acceso a datos de usuario</h2>
             <?php
             $stmt = $pdo->prepare("SELECT id, username FROM users WHERE role = 'worker'");
             $stmt->execute();
