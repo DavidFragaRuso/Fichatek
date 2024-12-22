@@ -3,7 +3,6 @@ if (!defined('BASE_PATH')) {
     exit('No se permite el acceso directo');
 }
 require_once BASE_PATH . '/config.php';
-require_once BASE_PATH . '/header.php';
 
 $db = new Db($pdo);
 
@@ -26,6 +25,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
     }
 }
 
+require_once BASE_PATH . '/header.php';
 ?>
 
     <div class="admin-panel">
@@ -58,3 +58,4 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
             </form>
         </div>
     </div>
+<?php require_once BASE_PATH . '/footer.php'; ?>

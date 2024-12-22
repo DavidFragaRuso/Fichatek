@@ -2,9 +2,13 @@
 session_start();
 require_once BASE_PATH . '/config.php';
 
+$db = new Db($pdo);
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'worker') {
     header('Location: login');
     exit();
+} else {
+    $user_id = $_SESSION['user_id']; 
 }
 
 // Aquí podrías gestionar el registro de entrada/salida
@@ -18,19 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$user_id, $entry_time, $exit_time]);
     
     // Mensaje de éxito o error
-    $message = "Fichaje registrado correctamente.";
-}
-?>
+    $_SESSION['message'] = "Fichaje registrado correctamente.";
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fichaje - Fichatek</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body>
+    // Redirige a la misma página (patrón PRG)
+    header('Location: records');
+    exit();
+
+}
+
+// Obtén el mensaje de la sesión, si existe
+$message = $_SESSION['message'] ?? null;
+unset($_SESSION['message']); // Limpia el mensaje después de mostrarlo
+
+require_once BASE_PATH . '/header.php';
+?>
     <div class="records-container">
         <h1>Fichaje de Entrada y Salida</h1>
         <?php if (isset($message)) { echo "<p>$message</p>"; } ?>
@@ -45,5 +50,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Registrar Fichaje</button>
         </form>
     </div>
-</body>
-</html>
+    <div class="records-list">
+        <h2>Fichajes del trabajador</h2>
+        <?php
+            $records = $db->getRecordFromUser($user_id);
+            if ($records) {
+                echo "<ul>";
+                foreach ($records as $record) {
+                    echo "<li>{$record['date']} - Entrada: {$record['entry_time']}, Salida: {$record['exit_time']}</li>";
+                }
+                echo "</ul>";
+                
+            } else {
+                echo "<p>No hay fichajes registrados.</p>";
+            }
+        ?>
+    </div>
+<?php require_once BASE_PATH . '/footer.php'; ?>

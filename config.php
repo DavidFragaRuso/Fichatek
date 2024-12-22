@@ -28,6 +28,14 @@ class Db {
         $stmt->execute([$username, $password, 'worker']);
     }
 
+    public function getRecordFromUser( $userId ) {
+        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $records;
+    }
+
 }
 
 class Auth {

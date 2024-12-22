@@ -40,4 +40,5 @@ $pageTitle = 'Panel de login';
             <button type="submit">Iniciar sesión</button>
         </form>
     </div>
-</body>
+
+<?php require_once BASE_PATH . '/footer.php'; ?>
