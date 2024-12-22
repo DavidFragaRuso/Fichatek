@@ -15,6 +15,9 @@ switch ($request) {
     case 'records':
         require 'pages/records.php';
         break;
+    case 'edit_user':
+        require 'pages/edit_user.php';
+        break;
     default:
         http_response_code(404);
         echo "Página no encontrada.";

@@ -25,6 +25,12 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['worker_id'])) {
+    $worker_id = intval($_POST['worker_id']); // Sanitiza el ID del trabajador
+    header("Location: edit_user&worker_id=$worker_id");
+    exit();
+}
+
 require_once BASE_PATH . '/header.php';
 ?>
 
@@ -48,13 +54,13 @@ require_once BASE_PATH . '/header.php';
             $workers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
             <form method="POST">
-                <select name="worker_id">
-                    <option>Selecciona un usuario</option>
+                <select name="worker_id" required>
+                    <option value="">Selecciona un usuario</option>
                     <?php foreach ($workers as $worker): ?>
-                        <option value="<?php echo $worker['id']; ?>"><?php echo $worker['username']; ?></option>
+                        <option value="<?php echo $worker['id']; ?>"><?php echo htmlspecialchars($worker['username']); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit">Ver registro horario</button>
+                <button type="submit">Editar usuario</button>
             </form>
         </div>
     </div>

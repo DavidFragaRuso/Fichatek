@@ -3,7 +3,7 @@ RewriteEngine On
 # Reglas para URLs amigables
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(admin|records|login)$ index.php?route=$1 [L]
+RewriteRule ^(admin|records|login|edit_user)$ index.php?route=$1 [L]
 
 # Bloquear acceso a archivos específicos
 <FilesMatch "config.php|robots.txt">
