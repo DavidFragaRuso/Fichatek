@@ -29,7 +29,7 @@ $pageTitle = 'Panel de login';
 
 require_once BASE_PATH . '/header.php';
 ?>
-    <div class="login-container bg-gray">
+    <div class="login-container panel">
         <h1>Inicia sesión</h1>
         <form method="POST" action="">
             <input type="text" name="username" placeholder="Usuario" required>

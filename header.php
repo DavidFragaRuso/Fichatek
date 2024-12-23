@@ -15,3 +15,11 @@ if (!defined('BASE_PATH')) {
     <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body class="container">
+    <header class="bg-grey">
+        <div class="logo">
+            <span>Fichateck</span>
+        </div>
+        <nav>
+            <a href="#">Salir</a>
+        </nav>
+    </header>

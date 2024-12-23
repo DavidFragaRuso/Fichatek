@@ -7,63 +7,69 @@ $db = new Db($pdo);
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'worker') {
     header('Location: login');
     exit();
-} else {
-    $user_id = $_SESSION['user_id']; 
 }
 
-// Aquí podrías gestionar el registro de entrada/salida
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = $_SESSION['user_id'];
-    $entry_time = $_POST['entry_time'];
-    $exit_time = $_POST['exit_time'];
-    
-    // Inserta el registro de entrada/salida en la base de datos
-    $stmt = $pdo->prepare("INSERT INTO work_records (user_id, entry_time, exit_time, date) VALUES (?, ?, ?, CURDATE())");
-    $stmt->execute([$user_id, $entry_time, $exit_time]);
-    
-    // Mensaje de éxito o error
-    $_SESSION['message'] = "Fichaje registrado correctamente.";
+$user_id = $_SESSION['user_id'];
 
-    // Redirige a la misma página (patrón PRG)
+// Consulta el último registro del usuario
+$stmt = $pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC LIMIT 1");
+$stmt->execute([$user_id]);
+$lastRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Determina el tipo de fichaje
+$nextType = ($lastRecord && $lastRecord['type'] === 'Entrada') ? 'Salida' : 'Entrada';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Registrar el nuevo fichaje
+    $stmt = $pdo->prepare("INSERT INTO work_records (user_id, type, time, date) VALUES (?, ?, ?, CURDATE())");
+    $stmt->execute([$user_id, $nextType, date('H:i:s')]);
+
+    // Redirige para evitar reenvíos de formularios
     header('Location: records');
     exit();
-
 }
 
-// Obtén el mensaje de la sesión, si existe
-$message = $_SESSION['message'] ?? null;
-unset($_SESSION['message']); // Limpia el mensaje después de mostrarlo
+$pageTitle = 'Panel de fichajes';
 
 require_once BASE_PATH . '/header.php';
 ?>
-    <div class="records-container">
-        <h1>Fichaje de Entrada y Salida</h1>
-        <?php if (isset($message)) { echo "<p>$message</p>"; } ?>
-        
-        <form method="POST">
-            <label for="entry_time">Hora de Entrada:</label>
-            <input type="time" name="entry_time" required>
-            
-            <label for="exit_time">Hora de Salida:</label>
-            <input type="time" name="exit_time" required>
-            
-            <button type="submit">Registrar Fichaje</button>
-        </form>
-    </div>
-    <div class="records-list">
-        <h2>Fichajes del trabajador</h2>
-        <?php
-            $records = $db->getRecordFromUser($user_id);
-            if ($records) {
-                echo "<ul>";
-                foreach ($records as $record) {
-                    echo "<li>{$record['date']} - Entrada: {$record['entry_time']}, Salida: {$record['exit_time']}</li>";
-                }
-                echo "</ul>";
-                
-            } else {
-                echo "<p>No hay fichajes registrados.</p>";
-            }
-        ?>
-    </div>
+<div class="user-data">
+    <p><b>Trabajador:</b> <?php echo $_SESSION['name']; ?></p>
+    <p><b>Centro de trabajo:</b> RubiBike - Carrer de Montserrat, 5 08191 Rubí (Barcelona)</p>
+</div>
+
+<div class="panel records-container">
+    <h1>Fichar</h1>
+    <p>Hora actual: <?php echo date('H:i:s'); ?></p>
+    <form method="POST">
+        <button type="submit">Marcar <?php echo $nextType === 'entry' ? 'Entrada' : 'Salida'; ?></button>
+    </form>
+</div>
+
+<div class="panel records-list">
+    <h2>Historial de fichajes</h2>
+    <?php
+    // Listar todos los registros del usuario
+    //$stmt = $pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC");
+    //$stmt->execute([$user_id]);
+    //$records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $records = $db->getRecordFromUser($user_id);
+
+    echo "<pre>";
+    var_dump($records);
+    echo "</pre>";
+
+    if ($records) {
+        echo "<ul>";
+        foreach ($records as $record) {
+            echo "<li>{$record['date']} - {$record['type']}: {$record['time']}</li>";
+        }
+        echo "</ul>";
+    } else {
+        echo "<p>No hay fichajes registrados.</p>";
+    }
+    ?>
+</div>
+
 <?php require_once BASE_PATH . '/footer.php'; ?>

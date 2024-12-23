@@ -28,12 +28,10 @@ class Db {
         $stmt->execute([$username, $password, 'worker']);
     }
 
-    public function getRecordFromUser( $userId ) {
-        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ?");
+    public function getRecordFromUser($userId) {
+        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC");
         $stmt->execute([$userId]);
-        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $records;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }
@@ -55,6 +53,7 @@ class Auth {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['name'] = $user['username'];
             return true;  // Login exitoso
         } else {
             return false;  // Login fallido

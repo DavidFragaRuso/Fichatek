@@ -76,6 +76,18 @@ body{
   font-family: "Roboto", serif;
   font-size: 18px;
 }
+header{
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px;
+}
+.logo>span{
+  color: white;
+  font-weight: bold;
+}
 footer{display: block;
   padding: 15px;
   text-align: right;
@@ -100,11 +112,14 @@ button{
   max-width: 1200px;
   margin: 0 auto;
 }
-.bg-gray{
-  background-color: azure;
-}
-.login-container{
+.panel{
+  border: solid 1px grey;
+  background-color: white;
   padding: 15px;
+  margin-bottom: 30px;
+}
+.bg-grey{
+  background-color: grey;
 }
 
 .error{
