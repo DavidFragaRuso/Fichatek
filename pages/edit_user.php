@@ -90,5 +90,10 @@ require_once BASE_PATH . '/header.php';
     }
     ?>
 </div>
+<div class="export-pdf">
+    <h2>Exportar registros</h2>
+    <a href="index.php?route=export_user_records&worker_id=<?php echo $user['id']; ?>" target="_blank" class="button">Descargar PDF</a>
+</div>
+
 
 <?php require_once BASE_PATH . '/footer.php'; ?>
