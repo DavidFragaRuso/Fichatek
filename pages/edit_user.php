@@ -26,6 +26,8 @@ if (!$user) {
     exit();
 }
 
+$pageTitle = 'Administrar usuario';
+
 require_once BASE_PATH . '/header.php';
 ?>
 
@@ -49,47 +51,62 @@ require_once BASE_PATH . '/header.php';
     </form>
 </div>
 <div class="edit-records">
-    <h2>Editar registros horarios de usuario</h2>
+    <h2>Historial de fichajes de <?php echo htmlspecialchars($user['username']); ?></h2>
     <?php
     $records = $db->getRecordFromUser($user['id']);
+    
     if ($records) {
-        echo "<form method='POST' action=''>";
-        echo "<ul>";
+        $currentDate = null;
+        echo '<table>';
+        echo '<thead>';
+        echo '<tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Acciones</th></tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
         foreach ($records as $record) {
-            echo "<li>
-                Fecha: {$record['date']} <br>
-                Entrada: <input type='time' name='entry_time_{$record['id']}' value='{$record['entry_time']}' required>
-                Salida: <input type='time' name='exit_time_{$record['id']}' value='{$record['exit_time']}' required>
-                <button type='submit' name='update_record' value='{$record['id']}'>Actualizar</button>
-            </li>";
+            $date = $record['date'];
+            $time = $record['time'];
+            $type = $record['type'];
+            
+            // Agrupar por fecha (encabezado para cada día)
+            if ($currentDate !== $date) {
+                $currentDate = $date;
+                echo "<tr><td colspan='4'><strong>" . date('l, d F Y', strtotime($date)) . "</strong></td></tr>";
+            }
+            
+            // Mostrar registros con formulario para editar
+            echo "<tr>";
+            echo "<td>";
+            ?>
+            <form method="POST" action="index.php?route=update_record">
+                <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
+                <input type="date" name="new_date" value="<?php echo htmlspecialchars($date); ?>">
+            </td>
+            <td>
+                <input type="time" name="new_time" value="<?php echo htmlspecialchars($time); ?>">
+            </td>
+            <td>
+                <select name="new_type">
+                    <option value="Entrada" <?php echo $type === 'Entrada' ? 'selected' : ''; ?>>Entrada</option>
+                    <option value="Salida" <?php echo $type === 'Salida' ? 'selected' : ''; ?>>Salida</option>
+                </select>
+            </td>
+            <td>
+                <button type="submit">Actualizar</button>
+            </form>
+            </td>
+            </tr>
+            <?php
         }
-        echo "</ul>";
-        echo "</form>";
+        
+        echo '</tbody>';
+        echo '</table>';
     } else {
-        echo "<p>No hay fichajes registrados.</p>";
-    }
-
-    // Manejo de la actualización de registros
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_record'])) {
-        $record_id = intval($_POST['update_record']);
-        $entry_time = $_POST['entry_time_' . $record_id];
-        $exit_time = $_POST['exit_time_' . $record_id];
-
-        // Validar los datos (opcional, pero recomendado)
-        if (strtotime($entry_time) !== false && strtotime($exit_time) !== false) {
-            $stmt = $pdo->prepare("UPDATE work_records SET entry_time = ?, exit_time = ? WHERE id = ?");
-            $stmt->execute([$entry_time, $exit_time, $record_id]);
-
-            echo "<p>Registro actualizado correctamente.</p>";
-            // Redirigir para evitar resubmisión del formulario
-            header("Location: index.php?route=edit_user&worker_id={$user['id']}");
-            exit();
-        } else {
-            echo "<p>Error: Hora inválida.</p>";
-        }
+        echo "<p>No hay fichajes registrados para este usuario.</p>";
     }
     ?>
 </div>
+
 <div class="export-pdf">
     <h2>Exportar registros</h2>
     <a href="index.php?route=export_user_records&worker_id=<?php echo $user['id']; ?>" target="_blank" class="button">Descargar PDF</a>

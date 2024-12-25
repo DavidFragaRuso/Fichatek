@@ -8,9 +8,9 @@ $request = $_GET['route'] ?? 'home';
 switch ($request) {
     case 'login':
         require 'pages/login.php';
+        break;
     case 'logout':
         require 'pages/logout.php';
-        break;
         break;
     case 'admin':
         require 'pages/admin.php';
@@ -20,6 +20,9 @@ switch ($request) {
         break;
     case 'edit_user':
         require 'pages/edit_user.php';
+        break;
+    case 'update_record':
+        require 'pages/update_record.php';
         break;
     case 'export_user_records':
         require 'pages/export_user_records.php';
