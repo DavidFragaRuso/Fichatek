@@ -29,7 +29,7 @@ class Db {
     }
 
     public function getRecordFromUser($userId) {
-        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC");
+        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date ASC, time DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

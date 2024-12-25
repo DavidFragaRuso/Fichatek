@@ -10,23 +10,40 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'worker') {
 }
 
 $user_id = $_SESSION['user_id'];
-
-// Consulta el último registro del usuario
-$stmt = $pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC LIMIT 1");
-$stmt->execute([$user_id]);
-$lastRecord = $stmt->fetch(PDO::FETCH_ASSOC);
-
+$records = $db->getRecordFromUser($user_id);
+echo "<pre>";
+var_dump($records);
+echo "</pre>";
 // Determina el tipo de fichaje
-$nextType = ($lastRecord && $lastRecord['type'] === 'Entrada') ? 'Salida' : 'Entrada';
+$lastRecord = end($records); // Obtener el último registro
+//var_dump($lastRecord);
+$nextType = 'Entrada'; // Por defecto, asumimos que será "Entrada"
+
+if ($lastRecord && $lastRecord['type'] === 'Entrada') {
+    $nextType = 'Salida'; // Si el último registro es "Entrada", el siguiente será "Salida"
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Registrar el nuevo fichaje
-    $stmt = $pdo->prepare("INSERT INTO work_records (user_id, type, time, date) VALUES (?, ?, ?, CURDATE())");
-    $stmt->execute([$user_id, $nextType, date('H:i:s')]);
+    $user_id = $_SESSION['user_id'];
+    $type = $_POST['type'];
+    $time = date('H:i:s');
 
-    // Redirige para evitar reenvíos de formularios
-    header('Location: records');
+    // Inserta el registro en la base de datos
+    $stmt = $pdo->prepare("INSERT INTO work_records (user_id, type, time, date) VALUES (?, ?, ?, CURDATE())");
+    $stmt->execute([$user_id, $type, $time]);
+
+    // Mensaje de éxito (puede almacenarse en la sesión para mostrar tras la redirección)
+    $_SESSION['flash_message'] = "Fichaje de $type registrado correctamente.";
+
+    // Redirige a la misma página para evitar la re-submisión
+    header("Location: records");
     exit();
+}
+
+// Mostrar mensajes flash si existen
+if (isset($_SESSION['flash_message'])) {
+    $message = $_SESSION['flash_message'];
+    unset($_SESSION['flash_message']);
 }
 
 $pageTitle = 'Panel de fichajes';
@@ -39,33 +56,59 @@ require_once BASE_PATH . '/header.php';
 </div>
 
 <div class="panel records-container">
-    <h1>Fichar</h1>
+    <h1>Fichaje de <?php echo $nextType; ?></h1>
     <p>Hora actual: <?php echo date('H:i:s'); ?></p>
     <form method="POST">
-        <button type="submit">Marcar <?php echo $nextType === 'entry' ? 'Entrada' : 'Salida'; ?></button>
+    <input type="hidden" name="type" value="<?php echo $nextType; ?>">
+    <button type="submit">Marcar <?php echo $nextType; ?></button>
     </form>
 </div>
 
 <div class="panel records-list">
     <h2>Historial de fichajes</h2>
     <?php
-    // Listar todos los registros del usuario
-    //$stmt = $pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date DESC, time DESC");
-    //$stmt->execute([$user_id]);
-    //$records = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $records = $db->getRecordFromUser($user_id);
-
-    echo "<pre>";
-    var_dump($records);
-    echo "</pre>";
 
     if ($records) {
-        echo "<ul>";
-        foreach ($records as $record) {
-            echo "<li>{$record['date']} - {$record['type']}: {$record['time']}</li>";
-        }
-        echo "</ul>";
+        ?>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Año</th>
+                    <th scope="col">Mes</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">registros</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <?php 
+                foreach ($records as $record) {
+                    $date = $record['date'];
+                    $dateTime = new DateTime($date);
+
+                    $year = $dateTime->format('Y');
+                    $month = $dateTime->format('F');
+                    $day = $dateTime->format('d');
+
+                    ?>
+                    <tr>
+                        <td><?php echo $year; ?></td>
+                        <td><?php echo $month; ?></td>
+                        <td><?php echo $day; ?></td>
+                        <td><?php echo $record['time'] . "-" . $record['type']; ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+                
+            </tbody>
+        </table>   
+        <?php
+        //echo "<ul>";
+        //foreach ($records as $record) {
+            //echo "<li>{$record['date']} - {$record['type']}: {$record['time']}</li>";
+        //}
+        //echo "</ul>"; */
     } else {
         echo "<p>No hay fichajes registrados.</p>";
     }
