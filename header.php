@@ -21,7 +21,7 @@ if (!defined('BASE_PATH')) {
         </div>
         <nav>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="?route=logout">Salir</a>
+            <a href="index.php?route=logout">Salir</a>
         <?php endif; ?>
         </nav>
     </header>

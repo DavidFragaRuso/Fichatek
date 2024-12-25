@@ -1,16 +1,21 @@
 <?php 
-//header( 'Location: pages/login.php' );
-//exit();
 require_once 'config.php';
 
+// Verifica si la ruta es logout y realiza el cierre de sesión
+if ($_GET['route'] === 'logout') {
+    // Inicia sesión
+    session_start();
+    session_destroy();
+    header('Location: index.php?route=login'); // Redirige al login
+    exit();
+}
+
+// Maneja las demás rutas
 $request = $_GET['route'] ?? 'home';
 
 switch ($request) {
     case 'login':
         require 'pages/login.php';
-        break;
-    case 'logout':
-        require 'pages/logout.php';
         break;
     case 'admin':
         require 'pages/admin.php';
@@ -32,6 +37,4 @@ switch ($request) {
         echo "Página no encontrada.";
         break;
 }
-
-
 ?>

@@ -68,6 +68,7 @@ require_once BASE_PATH . '/header.php';
     <h2>Historial de fichajes</h2>
     <?php
     if ($records) {
+        $records = array_reverse($records);
         // Variables para almacenar el último valor de año, mes y día
         $lastYear = null;
         $lastMonth = null;

@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-require_once BASE_PATH .'/assets/incl/pdf/fpdf.php';
+require_once BASE_PATH . '/assets/incl/pdf/fpdf.php';
 
 if (!isset($_GET['worker_id'])) {
     exit('ID de usuario no proporcionado.');
@@ -19,10 +19,10 @@ if (!$user) {
 
 // Obtener registros agrupados por mes y día
 $stmt = $pdo->prepare("
-    SELECT DATE_FORMAT(date, '%Y-%m') as month, date, entry_time, exit_time 
-    FROM work_records 
+    SELECT DATE_FORMAT(date, '%Y-%m-%d') as day, type, time
+    FROM work_records
     WHERE user_id = ? 
-    ORDER BY date, entry_time
+    ORDER BY date DESC, time DESC
 ");
 $stmt->execute([$worker_id]);
 $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -30,8 +30,8 @@ $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Agrupar registros por mes y día
 $groupedRecords = [];
 foreach ($records as $record) {
-    $month = $record['month'];
-    $day = $record['date'];
+    $month = date('F', strtotime($record['day']));  // Nombre del mes
+    $day = date('d', strtotime($record['day']));     // Día del mes
     $groupedRecords[$month][$day][] = $record;
 }
 
@@ -64,11 +64,11 @@ foreach ($groupedRecords as $month => $days) {
         $pdf->SetFont('Arial', '', 10);
         foreach ($records as $record) {
             $line = sprintf(
-                "   Entrada: %s - Salida: %s",
-                $record['entry_time'],
-                $record['exit_time']
+                "   Tipo: %s - Hora: %s",
+                utf8_decode($record['type']), // Entrada o Salida
+                $record['time']               // Hora registrada
             );
-            $pdf->Cell(0, 10, utf8_decode($line), 0, 1);
+            $pdf->Cell(0, 10, $line, 0, 1);
         }
         $pdf->Ln(5);
     }

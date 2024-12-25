@@ -29,7 +29,7 @@ class Db {
     }
 
     public function getRecordFromUser($userId) {
-        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date ASC, time DESC");
+        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date ASC, time ASC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -70,12 +70,13 @@ class Auth {
         return $_SESSION['role'] ?? null;
     }
 
-    // Método para cerrar sesión
+    // Método logout en la clase Auth
     public function logout() {
         session_destroy();
-        header('Location: login');
+        header('Location: index.php?route=login');
         exit();
     }
+
 }
 
 ?>
