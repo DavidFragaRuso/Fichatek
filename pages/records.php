@@ -11,9 +11,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'worker') {
 
 $user_id = $_SESSION['user_id'];
 $records = $db->getRecordFromUser($user_id);
-echo "<pre>";
-var_dump($records);
-echo "</pre>";
+//echo "<pre>";
+//var_dump($records);
+//echo "</pre>";
 // Determina el tipo de fichaje
 $lastRecord = end($records); // Obtener el último registro
 //var_dump($lastRecord);
@@ -67,8 +67,17 @@ require_once BASE_PATH . '/header.php';
 <div class="panel records-list">
     <h2>Historial de fichajes</h2>
     <?php
-
     if ($records) {
+        // Variables para almacenar el último valor de año, mes y día
+        $lastYear = null;
+        $lastMonth = null;
+        $lastDate = null;
+
+        // Contadores para rowspan
+        $yearCount = 0;
+        $monthCount = 0;
+        $dayCount = 0;
+
         ?>
         <table>
             <thead>
@@ -76,11 +85,10 @@ require_once BASE_PATH . '/header.php';
                     <th scope="col">Año</th>
                     <th scope="col">Mes</th>
                     <th scope="col">Fecha</th>
-                    <th scope="col">registros</th>
+                    <th scope="col">Registros</th>
                 </tr>
             </thead>
             <tbody>
-                
                 <?php 
                 foreach ($records as $record) {
                     $date = $record['date'];
@@ -88,31 +96,63 @@ require_once BASE_PATH . '/header.php';
 
                     $year = $dateTime->format('Y');
                     $month = $dateTime->format('F');
+                    $dayName = $dateTime->format('l');
                     $day = $dateTime->format('d');
+
+                    // Verificar si el año ha cambiado
+                    if ($year !== $lastYear) {
+                        $yearCount = count(array_filter($records, function($rec) use ($year) {
+                            return (new DateTime($rec['date']))->format('Y') === $year;
+                        }));
+                        $lastYear = $year;
+                    }
+
+                    // Verificar si el mes ha cambiado
+                    if ($month !== $lastMonth) {
+                        $monthCount = count(array_filter($records, function($rec) use ($month) {
+                            return (new DateTime($rec['date']))->format('F') === $month;
+                        }));
+                        $lastMonth = $month;
+                    }
+
+                    // Verificar si el día ha cambiado
+                    if ($date !== $lastDate) {
+                        $dayCount = count(array_filter($records, function($rec) use ($date) {
+                            return $rec['date'] === $date;
+                        }));
+                        $lastDate = $date;
+                    }
 
                     ?>
                     <tr>
-                        <td><?php echo $year; ?></td>
-                        <td><?php echo $month; ?></td>
-                        <td><?php echo $day; ?></td>
-                        <td><?php echo $record['time'] . "-" . $record['type']; ?></td>
+                        <?php if ($yearCount > 0): ?>
+                            <td rowspan="<?php echo $yearCount; ?>"><?php echo $year; ?></td>
+                            <?php $yearCount = 0; ?>
+                        <?php endif; ?>
+
+                        <?php if ($monthCount > 0): ?>
+                            <td rowspan="<?php echo $monthCount; ?>"><?php echo $month; ?></td>
+                            <?php $monthCount = 0; ?>
+                        <?php endif; ?>
+
+                        <?php if ($dayCount > 0): ?>
+                            <td rowspan="<?php echo $dayCount; ?>"><?php echo $dayName . " " . $day; ?></td>
+                            <?php $dayCount = 0; ?>
+                        <?php endif; ?>
+
+                        <td><?php echo $record['time'] . " - " . $record['type']; ?></td>
                     </tr>
                     <?php
                 }
                 ?>
-                
             </tbody>
-        </table>   
+        </table>
         <?php
-        //echo "<ul>";
-        //foreach ($records as $record) {
-            //echo "<li>{$record['date']} - {$record['type']}: {$record['time']}</li>";
-        //}
-        //echo "</ul>"; */
     } else {
         echo "<p>No hay fichajes registrados.</p>";
     }
     ?>
 </div>
+
 
 <?php require_once BASE_PATH . '/footer.php'; ?>

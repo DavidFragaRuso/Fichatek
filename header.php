@@ -20,6 +20,8 @@ if (!defined('BASE_PATH')) {
             <span>Fichateck</span>
         </div>
         <nav>
-            <a href="#">Salir</a>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="?route=logout">Salir</a>
+        <?php endif; ?>
         </nav>
     </header>

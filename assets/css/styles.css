@@ -132,7 +132,7 @@ td {
 }
 
 td:last-of-type {
-  text-align: center;
+  /*text-align: center;*/
 }
 
 tbody > tr:nth-of-type(even) {

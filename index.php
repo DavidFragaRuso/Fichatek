@@ -8,6 +8,9 @@ $request = $_GET['route'] ?? 'home';
 switch ($request) {
     case 'login':
         require 'pages/login.php';
+    case 'logout':
+        require 'pages/logout.php';
+        break;
         break;
     case 'admin':
         require 'pages/admin.php';
