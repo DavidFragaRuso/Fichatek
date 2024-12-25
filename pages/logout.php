@@ -4,5 +4,7 @@ require_once BASE_PATH . '/config.php';
 // Instancia de la clase Auth
 $auth = new Auth($pdo);
 
-// Llamar al método logout
-$auth->logout();
+if (isset($_SESSION['user_id'])) {
+    header('Location: admin');
+    exit();
+}
