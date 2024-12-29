@@ -4,4 +4,5 @@ RewriteBase /Fichatek/
 # Redirige todas las solicitudes a index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+RewriteRule ^([a-zA-Z_]+)/([0-9]+)$ index.php?route=$1&worker_id=$2 [L,QSA]
+RewriteRule ^([a-zA-Z_]+)$ index.php?route=$1 [L,QSA]

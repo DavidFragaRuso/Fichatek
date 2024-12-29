@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_date = $_POST['new_date'];
     $new_time = $_POST['new_time'];
     $new_type = $_POST['new_type'];
+    $workerId = $_POST['worker_id'];
     
     // Validación de datos
     if (empty($record_id) || empty($new_date) || empty($new_time) || empty($new_type)) {
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verifica si la actualización fue exitosa
     if ($stmt->rowCount() > 0) {
         // Redirige al administrador después de la actualización
-        header('Location: admin.php');
+        header("Location: edit_user/$workerId");
         exit();
     } else {
         echo "Error al actualizar el registro.";

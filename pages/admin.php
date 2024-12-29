@@ -27,7 +27,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new-name']) && isset
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['worker_id'])) {
     $worker_id = intval($_POST['worker_id']);
-    header("Location: index.php?route=edit_user&worker_id=$worker_id");
+    header("Location: edit_user/$worker_id");
     exit();
 }
 

@@ -33,7 +33,7 @@ require_once BASE_PATH . '/header.php';
 
 <div class="edit-user-container">
     <h1>Editar Usuario: <?php echo htmlspecialchars($user['username']); ?></h1>
-    <form method="POST" action="update_user.php">
+    <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
         <input type="hidden" name="worker_id" value="<?php echo $worker_id; ?>">
         <label for="username">Nombre de Usuario:</label>
         <input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
@@ -78,7 +78,8 @@ require_once BASE_PATH . '/header.php';
             echo "<tr>";
             echo "<td>";
             ?>
-            <form method="POST" action="index.php?route=update_record">
+            <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
+                <input type="hidden" name="worker_id" value="<?php echo $worker_id ?>">
                 <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
                 <input type="date" name="new_date" value="<?php echo htmlspecialchars($date); ?>">
             </td>
@@ -109,7 +110,8 @@ require_once BASE_PATH . '/header.php';
 
 <div class="export-pdf">
     <h2>Exportar registros</h2>
-    <a href="index.php?route=export_user_records&worker_id=<?php echo $user['id']; ?>" target="_blank" class="button">Descargar PDF</a>
+    <a href="<?php echo BASE_URL; ?>/export_user_records?worker_id=<?php echo $user['id']; ?>" target="_blank" class="button">Descargar PDF</a>
+</div>
 </div>
 
 

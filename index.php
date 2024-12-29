@@ -12,10 +12,14 @@ if ($_GET['route'] === 'logout') {
 
 // Maneja las demás rutas
 $request = $_GET['route'] ?? 'home';
+$workerId = $_GET['worker_id'] ?? null; // Captura el parámetro worker_id si existe
 
 switch ($request) {
     case 'login':
         require 'pages/login.php';
+        break;
+    case 'logout':
+        require 'pages/logout.php';
         break;
     case 'admin':
         require 'pages/admin.php';
