@@ -33,6 +33,9 @@ switch ($request) {
     case 'update_record':
         require 'pages/update_record.php';
         break;
+    case 'delete_record':
+        require_once 'pages/delete_record.php';
+        break;
     case 'export_user_records':
         require 'pages/export_user_records.php';
         break;

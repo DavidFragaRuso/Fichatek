@@ -6,3 +6,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z_]+)/([0-9]+)$ index.php?route=$1&worker_id=$2 [L,QSA]
 RewriteRule ^([a-zA-Z_]+)$ index.php?route=$1 [L,QSA]
+RewriteRule ^delete_record$ index.php?route=delete_record [L,QSA]
