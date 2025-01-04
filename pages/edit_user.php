@@ -71,11 +71,11 @@ require_once BASE_PATH . '/header.php';
             // Agrupar por fecha (encabezado para cada día)
             if ($currentDate !== $date) {
                 $currentDate = $date;
-                echo "<tr><td colspan='4'><strong>" . date('l, d F Y', strtotime($date)) . "</strong></td></tr>";
+                echo "<tr class='opener'><td colspan='4'><strong>" . date('l, d F Y', strtotime($date)) . "</strong></td></tr>";
             }
             
             // Mostrar registros con formulario para editar
-            echo "<tr>";
+            echo "<tr class='hidden-panel'>";
             echo "<td>";
             ?>
             <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
