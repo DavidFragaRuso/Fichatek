@@ -2,11 +2,13 @@
 define('BASE_PATH', __DIR__);
 define('BASE_URL', '/Fichatek');
 
+date_default_timezone_set('Europe/Madrid');
+
 /**
  * DB Conection
  */
 $host = 'localhost';
-$dbname = 'fichatek_bbdd';
+$dbname = 'u499365220_fichatek';
 $username = 'root';
 $password = ''; // Cambia según tu configuración
 
