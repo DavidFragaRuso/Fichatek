@@ -78,7 +78,7 @@ require_once BASE_PATH . '/header.php';
             echo "<tr class='hidden-panel'>";
             echo "<td>";
                 ?>
-                <form method="POST" action="<?php echo BASE_URL; ?>/edit_record">
+                <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
                     <input type="hidden" name="worker_id" value="<?php echo $worker_id ?>">
                     <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
                     <input type="date" name="new_date" value="<?php echo htmlspecialchars($date); ?>">

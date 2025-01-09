@@ -8,7 +8,7 @@ date_default_timezone_set('Europe/Madrid');
  * DB Conection
  */
 $host = 'localhost';
-$dbname = 'u499365220_fichatek';
+$dbname = 'fichatek_bbdd';
 $username = 'root';
 $password = ''; // Cambia según tu configuración
 
