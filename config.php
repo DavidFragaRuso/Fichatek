@@ -31,11 +31,26 @@ class Db {
         $stmt->execute([$username, $password, 'worker']);
     }
 
-    public function getRecordFromUser($userId) {
-        $stmt = $this->pdo->prepare("SELECT * FROM work_records WHERE user_id = ? ORDER BY date ASC, time ASC");
-        $stmt->execute([$userId]);
+    public function getRecordFromUser($user_id, $month = null, $year = null) {
+        $query = "SELECT * FROM work_records WHERE user_id = :user_id";
+        $params = ['user_id' => $user_id];
+    
+        if ($month !== null && $year !== null) {
+            $query .= " AND MONTH(date) = :month AND YEAR(date) = :year";
+            $params['month'] = $month;
+            $params['year'] = $year;
+        } elseif ($year !== null) {
+            $query .= " AND YEAR(date) = :year";
+            $params['year'] = $year;
+        }
+    
+        $query .= " ORDER BY date, time";
+    
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+    
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    }    
 
 }
 

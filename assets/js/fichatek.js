@@ -1,13 +1,12 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const openers = document.querySelectorAll(".opener");
+document.addEventListener('DOMContentLoaded', () => {
+    const openers = document.querySelectorAll('.opener');
 
     openers.forEach(opener => {
-        opener.addEventListener("click", () => {
-            // Encuentra los paneles relacionados
-            let nextRow = opener.nextElementSibling;
-            while (nextRow && nextRow.classList.contains("hidden-panel")) {
-                nextRow.classList.toggle("open");
-                nextRow = nextRow.nextElementSibling;
+        opener.addEventListener('click', () => {
+            const nextPanel = opener.nextElementSibling;
+            while (nextPanel && nextPanel.classList.contains('hidden-panel')) {
+                nextPanel.classList.toggle('visible');
+                nextPanel = nextPanel.nextElementSibling;
             }
         });
     });
