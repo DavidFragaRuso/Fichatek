@@ -84,7 +84,12 @@ require_once BASE_PATH . '/header.php';
 
 <div class="edit-records">
     <h2>Historial de fichajes de <?php echo htmlspecialchars($user['username']); ?></h2>
-    <?php $records = $db->getRecordFromUser($user['id']); ?>
+    <?php
+    $month = isset($_GET['month']) ? intval($_GET['month']) : null;
+    $year = isset($_GET['year']) ? intval($_GET['year']) : null;
+     
+    $records = $db->getRecordFromUser($user['id'], $month, $year); 
+    ?>
     <?php if ($records): ?>
         <table>
             <thead>
