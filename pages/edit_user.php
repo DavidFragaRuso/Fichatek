@@ -88,7 +88,10 @@ require_once BASE_PATH . '/header.php';
     $month = isset($_GET['month']) ? intval($_GET['month']) : null;
     $year = isset($_GET['year']) ? intval($_GET['year']) : null;
      
-    $records = $db->getRecordFromUser($user['id'], $month, $year); 
+    $records = $db->getRecordFromUser($user['id'], $month, $year);
+    //echo "<pre>";
+    //var_dump($records); 
+    //echo "</pre>";
     ?>
     <?php if ($records): ?>
         <table>
@@ -107,6 +110,16 @@ require_once BASE_PATH . '/header.php';
                     $date = $record['date'];
                     $time = $record['time'];
                     $type = $record['type'];
+                    //echo "<pre>";
+                    //var_dump($currentDate);
+                    //echo "<br>";
+                    //var_dump($date);
+                    //echo "<br>";
+                    //var_dump($time);
+                    //echo "<br>";
+                    //var_dump($type);
+                    //echo "</pre>";
+                    //echo "<br>";
                 ?>
                     <?php if ($currentDate !== $date): 
                         $currentDate = $date; ?>
@@ -150,8 +163,32 @@ require_once BASE_PATH . '/header.php';
 
 <div class="export-pdf">
     <h2>Exportar registros</h2>
-    <a href="<?php echo BASE_URL; ?>/export_user_records?worker_id=<?php echo $user['id']; ?>" target="_blank" class="button">Descargar PDF</a>
+    <form method="GET" action="<?php echo BASE_URL; ?>/export_user_records">
+        <input type="hidden" name="worker_id" value="<?php echo $user['id']; ?>">
+        
+        <label for="month">Mes:</label>
+        <select name="month">
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+                printf('<option value="%02d">%s</option>', $m, date('F', mktime(0, 0, 0, $m, 1)));
+            }
+            ?>
+        </select>
+
+        <label for="year">Año:</label>
+        <select name="year">
+            <?php
+            $currentYear = date('Y');
+            for ($y = $currentYear; $y >= ($currentYear - 5); $y--) {
+                echo "<option value='$y'>$y</option>";
+            }
+            ?>
+        </select>
+
+        <button type="submit" class="button">Descargar PDF</button>
+    </form>
 </div>
+
 
 
 <?php require_once BASE_PATH . '/footer.php'; ?>
