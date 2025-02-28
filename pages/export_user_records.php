@@ -33,9 +33,9 @@ $groupedRecords = [];
 foreach ($records as $record) {
     $date = $record['date'];
     if (!isset($groupedRecords[$date])) {
-        $groupedRecords[$date] = ['Entrada' => '', 'Salida' => ''];
+        $groupedRecords[$date] = ['Entrada' => [], 'Salida' => []];
     }
-    $groupedRecords[$date][$record['type']] = $record['time'];
+    $groupedRecords[$date][$record['type']][] = $record['time']; // ✅ Almacena múltiples registros
 }
 
 // Crear el PDF
@@ -46,9 +46,9 @@ $pdf->SetFont('Arial', 'B', 12);
 // Encabezado con datos de la empresa
 $pdf->Cell(190, 10, "REGISTRO DE JORNADA LABORAL", 0, 1, 'C');
 $pdf->SetFont('Arial', '', 10);
-$pdf->Cell(100, 5, "Empresa: [Nombre de la Empresa]", 0, 0);
-$pdf->Cell(90, 5, "Centro de Trabajo: [Dirección]", 0, 1);
-$pdf->Cell(100, 5, "Trabajador: " . utf8_decode($worker['username']), 0, 1);
+$pdf->Cell(100, 5, "Empresa: Rubi Bike", 0, 0);
+$pdf->Cell(90, 5, utf8_decode("Centro de Trabajo: C/ Montserrat, 5 08191 Rubí, Barcelona"), 0, 1);
+$pdf->Cell(100, 5, utf8_decode("Trabajador: " . $worker['username']), 0, 1);
 $pdf->Cell(100, 5, "Periodo: " . sprintf("%02d-%d", $month, $year), 0, 1);
 $pdf->Ln(5);
 
@@ -60,10 +60,15 @@ $pdf->Cell(63, 10, "Hora Salida", 1, 1, 'C');
 
 $pdf->SetFont('Arial', '', 10);
 foreach ($groupedRecords as $date => $times) {
-    $pdf->Cell(63, 8, $date, 1, 0, 'C');
-    $pdf->Cell(63, 8, $times['Entrada'], 1, 0, 'C');
-    $pdf->Cell(63, 8, $times['Salida'], 1, 1, 'C');
+    $numRows = max(count($times['Entrada']), count($times['Salida'])); // Determina cuántas filas se necesitan
+
+    for ($i = 0; $i < $numRows; $i++) {
+        $pdf->Cell(63, 8, $i == 0 ? $date : '', 1, 0, 'C');
+        $pdf->Cell(63, 8, $times['Entrada'][$i] ?? '', 1, 0, 'C');
+        $pdf->Cell(63, 8, $times['Salida'][$i] ?? '', 1, 1, 'C');
+    }
 }
+
 
 // Firma del trabajador
 //$pdf->Ln(10);

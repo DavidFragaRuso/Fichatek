@@ -93,70 +93,66 @@ require_once BASE_PATH . '/header.php';
     //var_dump($records); 
     //echo "</pre>";
     ?>
-    <?php if ($records): ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Tipo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php 
-                $currentDate = null;
-                foreach ($records as $record): 
-                    $date = $record['date'];
-                    $time = $record['time'];
-                    $type = $record['type'];
-                    //echo "<pre>";
-                    //var_dump($currentDate);
-                    //echo "<br>";
-                    //var_dump($date);
-                    //echo "<br>";
-                    //var_dump($time);
-                    //echo "<br>";
-                    //var_dump($type);
-                    //echo "</pre>";
-                    //echo "<br>";
-                ?>
-                    <?php if ($currentDate !== $date): 
-                        $currentDate = $date; ?>
-                        <tr class="opener">
-                            <td colspan="4"><strong><?php echo date('l, d F Y', strtotime($date)); ?></strong></td>
-                        </tr>
-                    <?php endif; ?>
-                    <tr class="hidden-panel">
-                        <td>
-                            <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
-                                <input type="hidden" name="worker_id" value="<?php echo $worker_id; ?>">
-                                <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
-                                <input type="date" name="new_date" value="<?php echo htmlspecialchars($date); ?>">
-                        </td>
-                        <td>
-                                <input type="time" name="new_time" value="<?php echo htmlspecialchars($time); ?>">
-                        </td>
-                        <td>
-                                <select name="new_type">
-                                    <option value="Entrada" <?php echo $type === 'Entrada' ? 'selected' : ''; ?>>Entrada</option>
-                                    <option value="Salida" <?php echo $type === 'Salida' ? 'selected' : ''; ?>>Salida</option>
-                                </select>
-                        </td>
-                        <td>
-                                <button type="submit">Actualizar</button>
-                            </form>
-                            <form method="POST" action="<?php echo BASE_URL; ?>/delete_record" style="display:inline;">
-                                <input type="hidden" name="worker_id" value="<?php echo $worker_id; ?>">
-                                <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
-                                <button type="submit" class="delete-button" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
+    <?php if ($records): 
+        $currentDate = null;
+
+        echo '<table>';
+        echo '<thead>';
+        echo '<tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Acciones</th></tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
+        foreach ($records as $record) {
+            $date = $record['date'];
+            $time = $record['time'];
+            $type = $record['type'];
+        
+            // Si la fecha cambia, cerrar tbody anterior y abrir uno nuevo
+            if ($currentDate !== $date) {
+                if ($currentDate !== null) {
+                    echo '</tbody>';
+                }
+                echo "<tbody>";
+                echo "<tr class='opener'><td colspan='4'><strong>" . date('l, d F Y', strtotime($date)) . "</strong></td></tr>";
+                $currentDate = $date;
+            }
+        
+            // Mostrar cada registro dentro del tbody correcto
+            echo "<tr class='hidden-panel'>";
+            echo "<td>";
+            ?>
+                <form method="POST" action="<?php echo BASE_URL; ?>/update_record">
+                    <input type="hidden" name="worker_id" value="<?php echo $worker_id ?>">
+                    <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
+                    <input type="date" name="new_date" value="<?php echo htmlspecialchars($date); ?>">
+                </td>
+                <td>
+                    <input type="time" name="new_time" value="<?php echo htmlspecialchars($time); ?>">
+                </td>
+                <td>
+                    <select name="new_type">
+                        <option value="Entrada" <?php echo $type === 'Entrada' ? 'selected' : ''; ?>>Entrada</option>
+                        <option value="Salida" <?php echo $type === 'Salida' ? 'selected' : ''; ?>>Salida</option>
+                    </select>
+                </td>
+                <td>
+                    <button type="submit">Actualizar</button>
+                </form>
+                <form method="POST" action="<?php echo BASE_URL; ?>/delete_record" style="display:inline;">
+                    <input type="hidden" name="worker_id" value="<?php echo $worker_id; ?>">
+                    <input type="hidden" name="record_id" value="<?php echo $record['id']; ?>">
+                    <button type="submit" class="delete-button" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">Eliminar</button>
+                </form>
+                </td>
+            </tr>
+            <?php
+        }
+        
+        // Cerrar la última sección de registros
+        echo '</tbody>';
+        echo '</table>';
+            
+    else: ?>
         <p>No hay fichajes registrados para este usuario.</p>
     <?php endif; ?>
 </div>
