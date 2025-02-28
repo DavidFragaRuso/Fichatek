@@ -32,7 +32,14 @@ class Db {
     }
 
     public function getRecordFromUser($user_id, $month = null, $year = null) {
-        $query = "SELECT * FROM work_records WHERE user_id = :user_id";
+        $query = "SELECT
+                    id,
+                    user_id,
+                    type,
+                    time,
+                    date
+                    /*TIMEDIFF(MAX(time), MIN(time)) AS horas_trabajadas*/   
+                FROM work_records WHERE user_id = :user_id";
         $params = ['user_id' => $user_id];
     
         if ($month !== null && $year !== null) {
